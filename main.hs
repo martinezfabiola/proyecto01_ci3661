@@ -14,3 +14,6 @@
 toBinary :: Int-> [Int]
 toBinary 0 = []
 toBinary x = toBinary (x `div` 2) ++ [x `rem` 2]
+
+verifyBinary :: [Int] -> [Int]
+| 
