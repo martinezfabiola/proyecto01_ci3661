@@ -161,5 +161,19 @@ pixelsToString fontArray = concat fontArray
 concatWithEmptyList :: Pixels -> Pixels -> Pixels
 concatWithEmptyList pixelList1 pixelList2 = pixelList1 ++ [""] ++ pixelList2
 
-pixelListToString :: [Pixels] -> Pixels
-pixelListToString pixelString = foldl1 concatWithEmptyList pixelString
+pixelListToPixels :: [Pixels] -> Pixels
+pixelListToPixels pixelString = foldl1 concatWithEmptyList pixelString
+
+pixelListToString :: [Pixels] -> [Char]
+pixelListToString pixelList = concat(map pixelsToString pixelList )
+
+concatPixels :: [Pixels] -> Pixels
+concatPixels pixelList = map concat(transpose pixelList)
+
+applyFont :: [Char] -> [Pixels]
+applyFont string = map font string
+
+-- revisar la q
+
+messageToPixels :: [Char] -> Pixels
+messageToPixels string = concatPixels(applyFont string)
