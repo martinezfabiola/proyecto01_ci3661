@@ -173,7 +173,29 @@ concatPixels pixelList = map concat(transpose pixelList)
 applyFont :: [Char] -> [Pixels]
 applyFont string = map font string
 
--- revisar la q
-
 messageToPixels :: [Char] -> Pixels
-messageToPixels string = concatPixels(applyFont string)
+messageToPixels string = map unwords (transpose (applyFont string))
+
+up :: Pixels -> Pixels
+up pixel = pixelTail ++ [pixelHead]
+ where pixelTail = tail pixel
+       pixelHead = head pixel
+
+down :: Pixels -> Pixels
+down pixel = pixelLast : pixelTail
+ where pixelTail = init pixel
+       pixelLast = last pixel
+
+right :: Pixels -> Pixels
+right pixel = map right' pixel
+ where right' xs = tail xs ++ [head xs]
+
+left :: Pixels -> Pixels
+left pixel = map left' pixel
+ where left' xs = last xs : init xs
+
+upsideDown :: Pixels -> Pixels
+upsideDown pixel = map reverse pixel
+
+backwards :: Pixels -> Pixels
+backwards pixel = transpose (map reverse (transpose pixel)) 
