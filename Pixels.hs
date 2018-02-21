@@ -30,7 +30,7 @@ toBinary :: Int -> [Int]
 toBinary 0 = []
 toBinary x = [x `rem` 2] ++ toBinary (x `div` 2)
 
--- | Verify if a list contains seven elements.
+-- | Verify if a list contains seven elements. if not, fill it with zeros.
 verifyBinary :: [Int] -> [Int]
 verifyBinary x = x ++ take (7-length x) (repeat 0) 
 
@@ -162,8 +162,8 @@ font :: Char -> Pixels
 font charElement = transpose(applyChangeNotation(applyToBinary(getFontBitmap charElement)))
 
 -- Converts a value of type Pixel into string
-pixelsToString :: Pixels -> [Char]
-pixelsToString fontArray = concat fontArray
+pixelToString :: Pixels -> [Char]
+pixelToString fontArray = unlines fontArray
 
 -- Joints to pixels list separated by "".
 concatWithEmptyList :: Pixels -> Pixels -> Pixels
@@ -175,7 +175,7 @@ pixelListToPixels pixelString = foldl1 concatWithEmptyList pixelString
 
 -- Converts a pixels list into string.
 pixelListToString :: [Pixels] -> [Char]
-pixelListToString pixelList = concat(map pixelsToString pixelList )
+pixelListToString pixelList = concat(map pixelToString pixelList )
 
 -- Receives a pixels list and produces a new pixels.
 concatPixels :: [Pixels] -> Pixels
