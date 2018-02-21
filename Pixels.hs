@@ -31,16 +31,8 @@ toBinary 0 = []
 toBinary x = [x `rem` 2] ++ toBinary (x `div` 2)
 
 -- | Verify if a list contains seven elements.
-verifyBinary :: [Int]-> [Int]
-verifyBinary x
- | length x == 6 = x ++ [0]
- | length x == 5 = x ++ [0,0] 
- | length x == 4 = x ++ [0,0,0]
- | length x == 3 = x ++ [0,0,0,0]
- | length x == 2 = x ++ [0,0,0,0,0]
- | length x == 1 = x ++ [0,0,0,0,0,0]
- | length x == 0 = [0,0,0,0,0,0,0]
- | otherwise = take 7 x
+verifyBinary :: [Int] -> [Int]
+verifyBinary x = x ++ take (7-length x) (repeat 0) 
 
 -- | Coonverts an hexadecimal list into bit list.
 applyToBinary :: [Int] -> [[Int]]
