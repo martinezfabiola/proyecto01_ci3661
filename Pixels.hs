@@ -1,5 +1,55 @@
-module Pixels (...) where
+{-|
+Module : Pixels 
 
+Description : program that receives a basic specification of the way in which 
+text should be represented in theled, the result must be shown by screen on a 
+String.
+
+Authors:
+- David Cabeza
+- Fabiola Martínez 
+
+Maintainer : 13-10191@usb.ve, 13-10838@usb.ve
+
+Universidad Simón Bolívar
+CI3661: Programming Languages I
+First Project Haskell
+-}
+
+module Pixels (
+    ) where
+
+import Data.Char
+import Data.List
+import Data.String
+
+type Pixels = [String]
+
+-- | Converts an integer to its binary representation.
+toBinary :: Int -> [Int]
+toBinary 0 = []
+toBinary x = [x `rem` 2] ++ toBinary (x `div` 2)
+
+-- | Verify if a list contains seven elements.
+verifyBinary :: [Int]-> [Int]
+verifyBinary x
+ | length x == 6 = x ++ [0]
+ | length x == 5 = x ++ [0,0] 
+ | length x == 4 = x ++ [0,0,0]
+ | length x == 3 = x ++ [0,0,0,0]
+ | length x == 2 = x ++ [0,0,0,0,0]
+ | length x == 1 = x ++ [0,0,0,0,0,0]
+ | length x == 0 = [0,0,0,0,0,0,0]
+ | otherwise = take 7 x
+
+-- | Coonverts an hexadecimal list into bit list.
+applyToBinary :: [Int] -> [[Int]]
+applyToBinary letterBitMap  = 
+    let applyVerifyBinary = map toBinary letterBitMap
+    in map verifyBinary applyVerifyBinary
+
+-- Contains an ascii bitmap.
+fontBitmap :: [[Int]]
 fontBitmap =
   [
     [ 0x00, 0x00, 0x00, 0x00, 0x00 ], --  (space)
@@ -97,20 +147,92 @@ fontBitmap =
     [ 0x00, 0x00, 0x7F, 0x00, 0x00 ], --  |
     [ 0x00, 0x41, 0x36, 0x08, 0x00 ]  --  }
   ]
-  
-font = undefined
 
-pixelsToString = undefined
-pixelListToPixels = undefined
-pixelListToString = undefined
+-- | Gets the bit representation ascii of a character.
+getFontBitmap :: Char -> [[Int]] -> [Int]
+getFontBitmap asciiElem fontBitmap
+ | index >= 0 = fontBitmap !! index
+ | otherwise = error"Soy Fabi"
+   where index = ord asciiElem - 32
 
-concatPixels = undefined
-messageToPixels = undefined
+-- Changes bits for pixel graphic representation.
+changeNotation :: [Int] -> [Char]
+changeNotation bitArray = map changeNotation bitArray
+ where changeNotation 0 = ' '
+       changeNotation 1 = '*'
 
-up = undefined
-down = undefined
-left = undefined
-right = undefined
-upsideDown = undefined
-backwards = undefined
-negative = undefined
+-- Changes bits list for pixel graphic representation list.
+applyChangeNotation :: [[Int]] -> [[Char]]
+applyChangeNotation bitArray  =  map changeNotation bitArray 
+
+-- Gets the representation in pixels of a particular character of the alphabet.
+font :: Char -> Pixels
+font charElement = transpose(applyChangeNotation(applyToBinary(getFontBitmap charElement fontBitmap)))
+
+-- Converts a value of type Pixel into string
+pixelsToString :: Pixels -> [Char]
+pixelsToString fontArray = concat fontArray
+
+-- Joints to pixels list separated by "".
+concatWithEmptyList :: Pixels -> Pixels -> Pixels
+concatWithEmptyList pixelList1 pixelList2 = pixelList1 ++ [""] ++ pixelList2
+
+-- Converts a pixels list into pixels.
+pixelListToPixels :: [Pixels] -> Pixels
+pixelListToPixels pixelString = foldl1 concatWithEmptyList pixelString
+
+-- Converts a pixels list into string.
+pixelListToString :: [Pixels] -> [Char]
+pixelListToString pixelList = concat(map pixelsToString pixelList )
+
+-- Receives a pixels list and produces a new pixels.
+concatPixels :: [Pixels] -> Pixels
+concatPixels pixelList = map concat(transpose pixelList)
+
+-- Receives a string and produces a pixels list.
+applyFont :: [Char] -> [Pixels]
+applyFont string = map font string
+
+-- Converts a string into pixels.
+messageToPixels :: [Char] -> Pixels
+messageToPixels string = map unwords (transpose (applyFont string))
+
+-- Move one pixels row up.
+up :: Pixels -> Pixels
+up pixel = pixelTail ++ [pixelHead]
+ where pixelTail = tail pixel
+       pixelHead = head pixel
+
+-- Move one pixels row down.
+down :: Pixels -> Pixels
+down pixel = pixelLast : pixelTail
+ where pixelTail = init pixel
+       pixelLast = last pixel
+
+-- Move one pixels column to the right.
+right :: Pixels -> Pixels
+right pixel = map right' pixel
+ where right' xs = tail xs ++ [head xs]
+
+-- Move one pixels column to the left.
+left :: Pixels -> Pixels
+left pixel = map left' pixel
+ where left' xs = last xs : init xs
+
+--  Reverses the order of the rows.
+upsideDown :: Pixels -> Pixels
+upsideDown pixel = map reverse pixel
+
+-- Reverses the order of the columns.
+backwards :: Pixels -> Pixels
+backwards pixel = transpose (map reverse (transpose pixel))
+
+-- Swaps spaces by asterisks and vice versa.
+changeAsterisks :: [Char] -> [Char]
+changeAsterisks pixelString = map change pixelString
+ where change '*' = ' '
+       change ' ' = '*'
+
+-- In a pixel swaps spaces by asterisks and vice versa.
+negative :: Pixels -> Pixels
+negative pixel = map changeAsterisks pixel
