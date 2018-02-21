@@ -141,10 +141,10 @@ fontBitmap =
   ]
 
 -- | Gets the bit representation ascii of a character.
-getFontBitmap :: Char -> [[Int]] -> [Int]
-getFontBitmap asciiElem fontBitmap
- | index >= 0 = fontBitmap !! index
- | otherwise = error"Soy Fabi"
+getFontBitmap :: Char -> [Int]
+getFontBitmap asciiElem
+ | 0 <= index && index < 94 = fontBitmap !! index
+ | otherwise = [0xFF, 0xFF, 0xFF, 0xFF]
    where index = ord asciiElem - 32
 
 -- Changes bits for pixel graphic representation.
@@ -159,7 +159,7 @@ applyChangeNotation bitArray  =  map changeNotation bitArray
 
 -- Gets the representation in pixels of a particular character of the alphabet.
 font :: Char -> Pixels
-font charElement = transpose(applyChangeNotation(applyToBinary(getFontBitmap charElement fontBitmap)))
+font charElement = transpose(applyChangeNotation(applyToBinary(getFontBitmap charElement)))
 
 -- Converts a value of type Pixel into string
 pixelsToString :: Pixels -> [Char]
