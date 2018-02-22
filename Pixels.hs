@@ -201,30 +201,34 @@ down pixel = pixelLast : pixelTail
  where pixelTail = init pixel
        pixelLast = last pixel
 
--- Move one pixels column to the right.
-right :: Pixels -> Pixels
-right pixel = map right' pixel
- where right' xs = tail xs ++ [head xs]
-
 -- Move one pixels column to the left.
 left :: Pixels -> Pixels
 left pixel = map left' pixel
- where left' xs = last xs : init xs
+ where left' xs = tail xs ++ [head xs]
 
---  Reverses the order of the rows.
-upsideDown :: Pixels -> Pixels
-upsideDown pixel = map reverse pixel
+-- Move one pixels column to the right.
+right :: Pixels -> Pixels
+right pixel = map right' pixel
+ where right' xs = last xs : init xs
 
 -- Reverses the order of the columns.
+upsideDown :: Pixels -> Pixels
+upsideDown pixel = transpose (map reverse (transpose pixel))
+
+--  Reverses the order of the rows.
 backwards :: Pixels -> Pixels
-backwards pixel = transpose (map reverse (transpose pixel))
+backwards pixel = map reverse pixel
 
 -- Swaps spaces by asterisks and vice versa.
-changeAsterisks :: [Char] -> [Char]
-changeAsterisks pixelString = map change pixelString
+reverseNotation :: [Char] -> [Char]
+reverseNotation pixelString = map change pixelString
  where change '*' = ' '
        change ' ' = '*'
 
 -- In a pixel swaps spaces by asterisks and vice versa.
 negative :: Pixels -> Pixels
-negative pixel = map changeAsterisks pixel
+negative pixel = map reverseNotation pixel
+
+-- Prints a pixel 
+printPixel :: Pixels -> IO()
+printPixel pixel = mapM_ print pixel
